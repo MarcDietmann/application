@@ -1,0 +1,97 @@
+/**
+This function will print out the mandelbrot set 
+If you want to see it in full action please download processing 4.01
+https://processing.org/download
+*/
+
+static class ImaginaryNumber{
+  double a;
+  double b;
+  
+  ImaginaryNumber(double a, double b){
+    this.a = a; 
+    this.b = b;
+  }
+  
+  static double abs(ImaginaryNumber i1){
+    return sqrt((float)(i1.a*i1.a + i1.b*i1.b));
+  }
+  
+  static ImaginaryNumber add(ImaginaryNumber i1, ImaginaryNumber i2){
+    return new ImaginaryNumber(i1.a+i2.a, i1.b+i2.b);
+  }
+  
+  static ImaginaryNumber mul(ImaginaryNumber i1, ImaginaryNumber i2){
+    return new ImaginaryNumber(i1.a * i2.a - i1.b*i2.b, i1.a*i2.b+ i1.b*i2.a);
+  }
+  static ImaginaryNumber iteration(ImaginaryNumber i, int n){
+   if(n == 0)return new ImaginaryNumber(0,0);
+   return _iteration(new ImaginaryNumber(0,0), i,n-1);
+  }
+  static ImaginaryNumber _iteration(ImaginaryNumber z, ImaginaryNumber c, int n){
+    if(n <= 0) return ImaginaryNumber.add(ImaginaryNumber.mul(z, z), c);
+    else return _iteration(ImaginaryNumber.add(ImaginaryNumber.mul(z, z), c), c, n-1);
+  }
+  
+  String toString(){
+    return "{a: "+ this.a+" b: "+this.b+"}\n";
+  }
+  
+}
+
+////////////////////////////above would be seperated into an other file
+
+
+double h=1;
+double w = 2;
+int iteration =0;
+double depth = 4.0;
+
+void setup(){
+  size(800, 800);
+  background(255);
+  pixelDensity(2);
+}
+
+void draw(){
+  for(int x = 0; x<width*2; x++){
+    for(int y=0; y<height*2; y++){
+      if(ImaginaryNumber.abs(ImaginaryNumber.iteration(new ImaginaryNumber(translate_x(x,depth), translate_y(y,depth)),iteration))<2){
+        set(x, y, getColor(iteration));
+      }
+    }
+  }
+  delay(500);
+  iteration++;
+
+}
+
+
+double translate_x(double x, double d){
+  return (x-(width))* (d/(width*2));
+}
+
+double translate_y(double y, double d){
+  return (y-height)* (d/(height*2));
+}
+
+color getColor(int iteration){
+  switch(iteration%7){
+    case 0: 
+      return color(253, 1,0);
+    case 1:
+      return color(247, 105, 21);
+    case 2:
+      return color(238, 222, 4);
+    case 3:
+      return color(160, 214, 54);
+    case 4:
+      return color(47, 162, 54);
+    case 5:
+      return color(51, 62, 212);
+    case 6:
+      return color(152,32,106);
+    default:
+      return color(25);
+  }
+}
